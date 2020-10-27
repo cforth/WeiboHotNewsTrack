@@ -1,0 +1,2 @@
+# WeiboHotNewsTrack
+获取每日微博实时热点的信息并存入SQLite
