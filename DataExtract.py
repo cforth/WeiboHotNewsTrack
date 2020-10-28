@@ -56,6 +56,7 @@ def extract(hot_news_html_path):
         # 获取日期和时间
         date_time = author_date_time[1].strip() if author_date_time else "No date and time"
         date_time = date_time if date_time.find("今天") == -1 else date_time.replace("今天", dir_date)
+        date_time = date_time if date_time.find("前") == -1 else dir_date + " " + time.strftime("%M:%S", time.localtime())
         print("Date Time: " + date_time)
         # 获取图片下载地址
         pic_link = pic_pattern.findall(hot_news_text)
