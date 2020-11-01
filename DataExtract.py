@@ -87,14 +87,23 @@ def save_data(title, content, author, date_time, pic_link):
     # 新建数据库和数据表
     if not DailyHotNews.has_table():
         DailyHotNews.new_table()
-    news = DailyHotNews(title=title, content=content, author=author, date=date_time)
-    news.save()
-    try:
-        now_date = time.strftime("%m{m}%d{d}", time.localtime()).format(m='月', d='日')
-        pic_link = "http:" + pic_link if pic_link.startswith("//") else pic_link
-        down_pic(pic_link, "./data/pic/" + now_date, pic_name)
-    except Exception as e:
-        print(e)
+
+    # 如果标题和时间都重复了，则不操作
+    find_result_dict = DailyHotNews.find_all('title', title)
+    if find_result_dict:
+        for res in find_result_dict:
+            if res.content == content:
+                print(res)
+                break
+    else:
+        news = DailyHotNews(title=title, content=content, author=author, date=date_time)
+        news.save()
+        try:
+            now_date = time.strftime("%m{m}%d{d}", time.localtime()).format(m='月', d='日')
+            pic_link = "http:" + pic_link if pic_link.startswith("//") else pic_link
+            down_pic(pic_link, "./data/pic/" + now_date, pic_name)
+        except Exception as e:
+            print(e)
 
 
 if __name__ == '__main__':
