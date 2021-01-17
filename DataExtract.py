@@ -24,10 +24,15 @@ def dir_handle(data_dir):
         for f in files:
             hot_html = os.path.join(path, f)
             if hot_html.find("main") == -1:
-                save_data(*extract(hot_html))
+                try:
+                    args = extract(hot_html)
+                    print(args)
+                    # save_data(*args)
+                except Exception as e:
+                    print(e)
 
 
-# 处理数据，网页保存的路径格式为 data/2020年/10月18日/***.html
+# 处理数据，网页保存的路径格式为 data/daily/2021年10月18日/***.html
 def extract(hot_news_html_path):
     # 匹配热点标题
     title_pattern = re.compile(r'<h2 class="list_title">(.*?)</h2>', re.DOTALL)
@@ -54,9 +59,15 @@ def extract(hot_news_html_path):
         author = author_date_time[0].strip() if author_date_time else "No author"
         print("Author: " + author)
         # 获取日期和时间
+        now_year = time.strftime("%Y{y}", time.localtime()).format(y='年', )
         date_time = author_date_time[1].strip() if author_date_time else "No date and time"
         date_time = date_time if date_time.find("今天") == -1 else date_time.replace("今天", dir_date)
         date_time = date_time if date_time.find("前") == -1 else dir_date + " " + time.strftime("%M:%S", time.localtime())
+        if date_time.find("-") != -1:
+            localtime = time.mktime(time.strptime(date_time, "%Y-%m-%d %H:%M"))
+            date_time = time.strftime("%Y{y}%m{m}%d{d} %H:%M", time.localtime(localtime)).format(y='年', m='月', d='日')
+        elif date_time.find("年") == -1:
+            date_time = now_year + date_time
         print("Date Time: " + date_time)
         # 获取图片下载地址
         pic_link = pic_pattern.findall(hot_news_text)
@@ -99,7 +110,8 @@ def save_data(title, content, author, date_time, pic_link):
         news = DailyHotNews(title=title, content=content, author=author, date=date_time)
         news.save()
         try:
-            now_date = time.strftime("%m{m}%d{d}", time.localtime()).format(m='月', d='日')
+            now_year = time.strftime("%Y{y}", time.localtime()).format(y='年', )
+            now_date = now_year + time.strftime("%m{m}%d{d}", time.localtime()).format(m='月', d='日')
             pic_link = "http:" + pic_link if pic_link.startswith("//") else pic_link
             down_pic(pic_link, "./data/pic/" + now_date, pic_name)
         except Exception as e:
@@ -107,4 +119,4 @@ def save_data(title, content, author, date_time, pic_link):
 
 
 if __name__ == '__main__':
-    dir_handle("./data/2020年")
+    dir_handle("data/daily/")

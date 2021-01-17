@@ -28,6 +28,8 @@ def zip_file_path(input_path, output_path, output_name):
 if __name__ == '__main__':
     # 一定要确认当天所有的实时热点信息已经处理完毕后，再进行备份和清理
     now_year = time.strftime("%Y{y}", time.localtime()).format(y='年', )
-    now_date = time.strftime("%m{m}%d{d}", time.localtime()).format(m='月', d='日')
-    zip_file_path(r"./data/"+now_year+"/"+now_date, './data/back/', now_date+".zip")
-    shutil.rmtree(r"./data/2020年/" + now_date)
+    now_date = now_year + time.strftime("%m{m}%d{d}", time.localtime()).format(m='月', d='日')
+    zip_file_path(r"./data/daily/" + now_date, 'data/daily_back/', now_date + ".zip")
+    zip_file_path(r"./data/pic/" + now_date, 'data/pic_back/', now_date + ".zip")
+    shutil.rmtree(r"./data/daily/" + now_date)
+    shutil.rmtree(r"./data/pic/" + now_date)

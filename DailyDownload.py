@@ -35,17 +35,18 @@ def download():
     now_year = time.strftime("%Y{y}", time.localtime()).format(y='年',)
     now_date = time.strftime("%m{m}%d{d}", time.localtime()).format(m='月', d='日')
     print(now_date)
-    # 根据当天日期建立文件夹，格式为"2020年/10月18日"
-    if not os.path.exists("./data/" + now_year + "/" + now_date):
-        os.mkdir("./data/" + now_year + "/" + now_date)
+    # 根据当天日期建立文件夹，格式为"2021年10月18日"
+    daily_news_folder = "./data/daily/" + now_year + now_date
+    if not os.path.exists(daily_news_folder):
+        os.mkdir(daily_news_folder)
 
     # 将实时热点主网页存入文件中
-    with open("./data/" + now_year + "/" + now_date + "/main.html", 'wb') as f:
+    with open(daily_news_folder + "/main.html", 'wb') as f:
         f.write(wb.page_source.encode("utf-8", "ignore"))  # 忽略非法字符
         print('写入成功')
 
     # 根据实时热点主网页，获取所有热点的子网页链接
-    with open("./data/" + now_year + "/" + now_date + "/main.html", 'r', encoding="utf-8") as f:
+    with open(daily_news_folder + "/main.html", 'r', encoding="utf-8") as f:
         hot_news_html_text = f.read()
 
     pattern = re.compile(r'<h3 class="list_title_b">(.*)</h3>')
@@ -62,7 +63,7 @@ def download():
         # 将当日实时热点的子网页存入文件中
         now_time = time.strftime("%m%d_%H_%M_%S_", time.localtime())
         html_name = now_time + '%03d' % index
-        with open("./data/" + now_year + "/" + now_date + "/" + html_name + ".html", 'wb') as f:
+        with open(daily_news_folder + "/" + html_name + ".html", 'wb') as f:
             f.write(wb.page_source.encode("utf-8", "ignore"))  # 忽略非法字符
             print('写入成功' + str(index))
 
