@@ -26,8 +26,8 @@ def dir_handle(data_dir):
             if hot_html.find("main") == -1:
                 try:
                     args = extract(hot_html)
-                    print(args)
-                    # save_data(*args)
+                    # print(args)
+                    save_data(*args)
                 except Exception as e:
                     print(e)
 
